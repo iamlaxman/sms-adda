@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=yes">
+  <meta name="description" content="SMS Adda – Anonymous real-time chat. Sign in to start chatting.">
+  <meta name="theme-color" content="#F8FAFC" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#020617" media="(prefers-color-scheme: dark)">
+  <title>SMS Adda - Welcome</title>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg">
+  <link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96">
+  <link rel="shortcut icon" href="/favicon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="SMS Adda">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --primary:#2563EB;--primary-hover:#1D4ED8;--primary-light:#EFF6FF;
+      --bg:#F8FAFC;--surface:#FFFFFF;--border:#E2E8F0;
+      --heading:#0F172A;--body:#475569;--muted:#94A3B8;
+      --danger:#EF4444;--success:#10B981;--warning:#F59E0B;
+      --shadow-sm:0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md:0 4px 15px rgba(0,0,0,0.06);
+      --radius-sm:10px;--radius-md:16px;--radius-lg:24px;
+      --transition:180ms ease;
+    }
+    body.dark{
+      --bg:#020617;--surface:#0F172A;--border:#1E293B;
+      --heading:#F1F5F9;--body:#CBD5E1;--muted:#64748B;
+    }
+    body{
+      font-family:'Inter',system-ui,-apple-system,sans-serif;
+      background:var(--bg);color:var(--body);
+      min-height:100vh;min-height:100dvh;
+      display:flex;align-items:center;justify-content:center;
+      padding:16px;transition:background 300ms,color 300ms;
+      -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+      -webkit-tap-highlight-color:transparent;
+    }
+    
+    .auth-wrap{width:100%;max-width:420px}
+    .auth-card{
+      background:var(--surface);border:1px solid var(--border);
+      border-radius:var(--radius-lg);padding:28px 24px;
+      box-shadow:var(--shadow-md);position:relative;
+    }
+    
+    .theme-btn{
+      position:absolute;top:12px;right:12px;
+      width:34px;height:34px;border-radius:50%;
+      background:var(--bg);border:1px solid var(--border);
+      display:flex;align-items:center;justify-content:center;
+      cursor:pointer;color:var(--body);transition:all var(--transition);
+    }
+    .theme-btn:hover{background:var(--border)}
+    .theme-btn:active{transform:scale(0.92)}
+    
+    .logo-section{text-align:center;margin-bottom:20px}
+    .logo-img{width:56px;height:56px;border-radius:16px;object-fit:cover;box-shadow:0 6px 20px rgba(37,99,235,0.2)}
+    .logo-fb{width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,#2563EB,#7C3AED,#EC4899);display:none;align-items:center;justify-content:center;margin:0 auto}
+    .logo-title{font-size:1.4rem;font-weight:800;color:var(--heading);margin-top:10px;letter-spacing:-0.5px}
+    .logo-sub{font-size:0.84rem;color:var(--muted);margin-top:2px}
+    
+    .tabs{display:flex;background:var(--bg);border-radius:var(--radius-sm);padding:3px;margin-bottom:20px}
+    .tab{flex:1;padding:9px;text-align:center;font-weight:600;font-size:0.84rem;border:none;background:transparent;color:var(--muted);cursor:pointer;border-radius:8px;transition:all var(--transition);font-family:inherit}
+    .tab.active{background:var(--surface);color:var(--heading);box-shadow:var(--shadow-sm)}
+    .tab:active{transform:scale(0.97)}
+    
+    .form-section{display:none;animation:fadeIn 0.25s ease}
+    .form-section.active{display:block}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+    
+    .field{margin-bottom:12px}
+    .field label{display:block;font-size:0.8rem;font-weight:600;color:var(--heading);margin-bottom:4px}
+    .field input{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:0.88rem;outline:none;background:var(--bg);color:var(--heading);transition:border-color var(--transition);font-family:inherit}
+    .field input:focus{border-color:var(--primary)}
+    .field input::placeholder{color:var(--muted)}
+    
+    .pwd-wrap{position:relative}
+    .pwd-wrap input{padding-right:42px}
+    .pwd-toggle{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);padding:4px}
+    .pwd-toggle:active{transform:translateY(-50%) scale(0.9)}
+    
+    .err-msg{font-size:0.75rem;color:var(--danger);margin-top:3px;display:none}
+    .err-msg.show{display:block}
+    
+    .btn{width:100%;padding:11px;border-radius:var(--radius-sm);font-weight:700;font-size:0.9rem;border:none;cursor:pointer;transition:all var(--transition);font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px}
+    .btn:active{transform:scale(0.97)}
+    .btn-primary{background:var(--primary);color:#fff}
+    .btn-primary:hover{background:var(--primary-hover)}
+    .btn-primary:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+    .btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--heading)}
+    .btn-outline:hover{background:var(--border)}
+    
+    .divider{display:flex;align-items:center;gap:10px;margin:18px 0;color:var(--muted);font-size:0.78rem}
+    .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+    
+    .btn-google{border:1.5px solid var(--border);background:var(--surface);color:var(--heading)}
+    .btn-google:hover{background:var(--bg)}
+    .btn-google svg{width:18px;height:18px;flex-shrink:0}
+    
+    .spinner{width:18px;height:18px;border:2px solid transparent;border-top-color:currentColor;border-radius:50%;animation:spin 0.6s linear infinite;display:none}
+    .spinner.show{display:inline-block}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    
+    .alert{padding:12px 14px;border-radius:var(--radius-sm);font-size:0.82rem;margin-bottom:14px;display:none;align-items:flex-start;gap:10px;line-height:1.4}
+    .alert.show{display:flex}
+    .alert.info{background:#EFF6FF;color:#1e40af;border:1px solid var(--primary)}
+    .alert.success{background:#f0fdf4;color:#166534;border:1px solid var(--success)}
+    .alert.error{background:#fef2f2;color:#991b1b;border:1px solid var(--danger)}
+    .alert.warning{background:#fffbeb;color:#92400e;border:1px solid var(--warning)}
+    body.dark .alert.info{background:#1e3a5f;color:#93c5fd}
+    body.dark .alert.success{background:#022c22;color:#6ee7b7}
+    body.dark .alert.error{background:#450a0a;color:#fca5a5}
+    body.dark .alert.warning{background:#451a03;color:#fcd34d}
+    .alert-icon{flex-shrink:0;margin-top:1px}
+    
+    .link-text{text-align:center;margin-top:14px;font-size:0.82rem;color:var(--muted)}
+    .link-text a{color:var(--primary);font-weight:600;cursor:pointer;text-decoration:none}
+    .link-text a:hover{text-decoration:underline}
+    
+    .forgot-link{display:block;text-align:right;font-size:0.76rem;color:var(--primary);cursor:pointer;margin-top:2px;font-weight:500}
+    
+    .verify-sent-box{background:#f0fdf4;border:1.5px solid var(--success);border-radius:var(--radius-md);padding:20px 18px;text-align:center;animation:fadeIn 0.3s ease}
+    body.dark .verify-sent-box{background:#022c22}
+    .verify-sent-box .v-icon{width:52px;height:52px;border-radius:50%;background:var(--success);display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px}
+    .verify-sent-box h3{font-size:1rem;font-weight:700;color:var(--heading);margin-bottom:4px}
+    .verify-sent-box .v-email{font-weight:700;color:var(--primary);font-size:0.9rem;word-break:break-all}
+    .verify-sent-box p{font-size:0.82rem;color:var(--body);margin:6px 0;line-height:1.5}
+    .verify-sent-box .spam-note{background:#fffbeb;border:1px solid var(--warning);border-radius:8px;padding:10px 14px;margin-top:12px;font-size:0.8rem;color:#92400e;display:flex;align-items:center;gap:8px;text-align:left}
+    body.dark .verify-sent-box .spam-note{background:#451a03;color:#fcd34d}
+    .verify-sent-box .spam-note i{flex-shrink:0}
+    
+    .redirect-screen{text-align:center;padding:20px;animation:fadeIn 0.3s ease}
+    .redirect-screen .loader{width:48px;height:48px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px}
+    .redirect-screen h3{font-size:1rem;font-weight:700;color:var(--heading);margin-bottom:4px}
+    .redirect-screen p{font-size:0.84rem;color:var(--muted)}
+    
+    @media(max-width:400px){
+      .auth-card{padding:22px 16px;border-radius:var(--radius-md)}
+      .logo-img,.logo-fb{width:48px;height:48px;border-radius:14px}
+      .logo-title{font-size:1.2rem}
+      .btn{padding:10px;font-size:0.85rem}
+      .field input{padding:9px 12px;font-size:0.84rem}
+    }
+    @media(min-width:768px){.auth-card{padding:32px 28px}}
+  </style>
+</head>
+<body>
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <button class="theme-btn" id="themeBtn" aria-label="Toggle theme"><i data-lucide="moon" id="themeIcon" style="width:17px;height:17px;"></i></button>
+
+      <div class="logo-section">
+        <img src="/favicon/favicon.svg" alt="SMS Adda" class="logo-img" id="logoImg">
+        <div class="logo-fb" id="logoFb"><i data-lucide="messages-square" style="width:28px;height:28px;color:#fff;"></i></div>
+        <div class="logo-title">SMS Adda</div>
+        <div class="logo-sub">Anonymous Chat • Privacy First</div>
+      </div>
+
+      <div class="redirect-screen" id="redirectScreen"><div class="loader"></div><h3>Loading...</h3><p>Checking your session</p></div>
+
+      <div class="alert" id="alert"><div class="alert-icon"><i data-lucide="info" style="width:17px;height:17px;"></i></div><span id="alertText"></span></div>
+
+      <div id="verifySentSection" style="display:none">
+        <div class="verify-sent-box">
+          <div class="v-icon"><i data-lucide="mail-check" style="width:26px;height:26px;color:#fff;"></i></div>
+          <h3>Verification Email Sent!</h3>
+          <p>We've sent a verification link to<br><span class="v-email" id="verifyEmail"></span></p>
+          <p>Click the link in the email to activate your account, then sign in.</p>
+          <div class="spam-note"><i data-lucide="alert-triangle" style="width:18px;height:18px;"></i><span><strong>Didn't see it?</strong> Check your spam/junk folder. Sometimes verification emails land there.</span></div>
+          <button class="btn btn-primary" id="backToLoginBtn" style="margin-top:14px"><i data-lucide="arrow-left" style="width:16px;height:16px;"></i> Back to Sign In</button>
+        </div>
+      </div>
+
+      <div id="authSection" style="display:none">
+        <div class="tabs" id="tabs"><button class="tab active" data-tab="login">Sign In</button><button class="tab" data-tab="signup">Sign Up</button></div>
+
+        <div class="form-section active" id="loginForm">
+          <div class="field"><label>Email</label><input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email"></div>
+          <div class="field"><label>Password</label><div class="pwd-wrap"><input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password"><button class="pwd-toggle" data-target="loginPass"><i data-lucide="eye-off" style="width:16px;height:16px;"></i></button></div></div>
+          <span class="forgot-link" id="forgotLink">Forgot password?</span>
+          <div class="err-msg" id="loginErr"></div>
+          <button class="btn btn-primary" id="loginBtn" style="margin-top:14px"><span id="loginBtnText">Sign In</span><span class="spinner" id="loginSpinner"></span></button>
+        </div>
+
+        <div class="form-section" id="signupForm">
+          <div class="field"><label>Display Name</label><input type="text" id="signupName" placeholder="How others see you" maxlength="20" autocomplete="off"></div>
+          <div class="field"><label>Email</label><input type="email" id="signupEmail" placeholder="you@example.com" autocomplete="email"></div>
+          <div class="field"><label>Password</label><div class="pwd-wrap"><input type="password" id="signupPass" placeholder="Min. 6 characters" autocomplete="new-password"><button class="pwd-toggle" data-target="signupPass"><i data-lucide="eye-off" style="width:16px;height:16px;"></i></button></div></div>
+          <div class="err-msg" id="signupErr"></div>
+          <button class="btn btn-primary" id="signupBtn" style="margin-top:14px"><span id="signupBtnText">Create Account</span><span class="spinner" id="signupSpinner"></span></button>
+        </div>
+
+        <div class="divider">or</div>
+
+        <button class="btn btn-outline btn-google" id="googleBtn">
+          <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Continue with Google
+        </button>
+
+        <div class="link-text" id="authLink">Don't have an account? <a id="switchLink">Sign up</a></div>
+      </div>
+    </div>
+  </div>
+
+<script>
+(function(){
+  lucide.createIcons();
+  const fc={apiKey:"AIzaSyCoKAoarWlu8B6cnIw549hfg_UPe8YRSko",authDomain:"nepchat-aac9d.firebaseapp.com",databaseURL:"https://nepchat-aac9d-default-rtdb.firebaseio.com",projectId:"nepchat-aac9d",storageBucket:"nepchat-aac9d.firebasestorage.app",messagingSenderId:"179485804786",appId:"1:179485804786:web:3ec8a2fc563b08c682286b"};
+  firebase.initializeApp(fc);const auth=firebase.auth();const SD=24*60*60*1000;let curTab='login',authChecked=false;
+  
+  function $(id){return document.getElementById(id)}
+  
+  // Logo fallback
+  const logoImg=$('logoImg'),logoFb=$('logoFb');
+  if(logoImg){logoImg.addEventListener('error',function(){logoImg.style.display='none';logoFb.style.display='flex';lucide.createIcons()})}
+  
+  // ===== SERVICE WORKER REGISTRATION =====
+  if('serviceWorker' in navigator){
+    window.addEventListener('load',function(){
+      navigator.serviceWorker.register('/sw.js',{scope:'/'}).then(function(r){console.log('[SW] Main registered:',r.scope)}).catch(function(e){console.error('[SW] Main failed:',e)});
+      navigator.serviceWorker.register('/firebase-messaging-sw.js',{scope:'/'}).then(function(r){console.log('[SW] FCM registered:',r.scope)}).catch(function(e){console.error('[SW] FCM failed:',e)});
+    });
+  }
+  
+  // ===== AUTO-REDIRECT =====
+  auth.onAuthStateChanged(function(user){
+    authChecked=true;
+    if(user&&user.emailVerified){saveAndGo(user);return}
+    if(user&&!user.emailVerified){showAlert('Please verify your email first. Check your inbox and spam folder.','warning');auth.signOut();showAuthForm();return}
+    const ud=JSON.parse(localStorage.getItem('smsadda_userdata')||'{}');
+    if(ud.uid&&ud.expiresAt&&Date.now()<ud.expiresAt){$('redirectScreen').style.display='block';$('authSection').style.display='none';$('verifySentSection').style.display='none';setTimeout(function(){window.location.href='/chat.html'},500);return}
+    showAuthForm();
+  });
+  
+  function showAuthForm(){$('redirectScreen').style.display='none';$('authSection').style.display='block';$('verifySentSection').style.display='none';lucide.createIcons()}
+  
+  // Tabs
+  $('tabs').querySelectorAll('.tab').forEach(function(t){t.addEventListener('click',function(){switchTab(this.dataset.tab)})});
+  $('switchLink').addEventListener('click',function(){switchTab(curTab==='login'?'signup':'login')});
+  function switchTab(tab){curTab=tab;$('tabs').querySelectorAll('.tab').forEach(function(t){t.classList.toggle('active',t.dataset.tab===tab)});$('loginForm').classList.toggle('active',tab==='login');$('signupForm').classList.toggle('active',tab==='signup');$('authLink').innerHTML=tab==='login'?'Don\'t have an account? <a id="switchLink">Sign up</a>':'Already have an account? <a id="switchLink">Sign in</a>';$('switchLink').addEventListener('click',function(){switchTab(curTab==='login'?'signup':'login')});hideErrors();hideAlert()}
+  
+  function showVerifySent(email){$('verifySentSection').style.display='block';$('authSection').style.display='none';$('redirectScreen').style.display='none';$('verifyEmail').textContent=email;$('backToLoginBtn').addEventListener('click',function(){$('verifySentSection').style.display='none';$('authSection').style.display='block';switchTab('login')});lucide.createIcons()}
+  
+  // Password toggle
+  document.querySelectorAll('.pwd-toggle').forEach(function(b){b.addEventListener('click',function(){const t=$(''+this.dataset.target);const i=this.querySelector('i');if(t.type==='password'){t.type='text';i.setAttribute('data-lucide','eye')}else{t.type='password';i.setAttribute('data-lucide','eye-off')}lucide.createIcons()})});
+  
+  function showAlert(msg,type){$('alert').className='alert show '+type;$('alertText').textContent=msg;$('alert').querySelector('.alert-icon i').setAttribute('data-lucide',type==='success'?'check-circle':type==='error'?'alert-circle':type==='warning'?'alert-triangle':'info');lucide.createIcons();setTimeout(hideAlert,5000)}
+  function hideAlert(){$('alert').classList.remove('show')}
+  function hideErrors(){$('loginErr').classList.remove('show');$('signupErr').classList.remove('show')}
+  
+  // Login
+  $('loginBtn').addEventListener('click',function(){const e=$('loginEmail').value.trim(),p=$('loginPass').value;if(!e){$('loginErr').textContent='Enter your email';$('loginErr').classList.add('show');return}if(!p){$('loginErr').textContent='Enter your password';$('loginErr').classList.add('show');return}setLoading('login',true);auth.signInWithEmailAndPassword(e,p).then(function(r){if(!r.user.emailVerified){showAlert('Please verify your email first. Check inbox and spam.','warning');auth.signOut();setLoading('login',false);return}saveAndGo(r.user)}).catch(function(err){setLoading('login',false);$('loginErr').textContent=getError(err);$('loginErr').classList.add('show')})});
+  
+  // Sign Up
+  $('signupBtn').addEventListener('click',function(){const n=$('signupName').value.trim(),e=$('signupEmail').value.trim(),p=$('signupPass').value;if(!n||n.length<3){$('signupErr').textContent='Name must be at least 3 characters';$('signupErr').classList.add('show');return}if(!/^[a-zA-Z0-9_-]+$/.test(n)){$('signupErr').textContent='Only letters, numbers, _, -';$('signupErr').classList.add('show');return}if(!e){$('signupErr').textContent='Enter your email';$('signupErr').classList.add('show');return}if(!p||p.length<6){$('signupErr').textContent='Password must be 6+ characters';$('signupErr').classList.add('show');return}setLoading('signup',true);auth.createUserWithEmailAndPassword(e,p).then(function(r){return r.user.updateProfile({displayName:n}).then(function(){return r.user.sendEmailVerification()}).then(function(){setLoading('signup',false);showVerifySent(e)})}).catch(function(err){setLoading('signup',false);$('signupErr').textContent=getError(err);$('signupErr').classList.add('show')})});
+  
+  // Google
+  $('googleBtn').addEventListener('click',function(){auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).then(function(r){saveAndGo(r.user)}).catch(function(err){showAlert(getError(err),'error')})});
+  
+  // Forgot password
+  $('forgotLink').addEventListener('click',function(){const e=$('loginEmail').value.trim();if(!e){showAlert('Enter your email first','error');return}auth.sendPasswordResetEmail(e).then(function(){showAlert('Reset email sent! Check inbox and spam.','success')}).catch(function(err){showAlert(getError(err),'error')})});
+  
+  function saveAndGo(user){const data={uid:user.uid,email:user.email,displayName:user.displayName||user.email.split('@')[0],photoURL:user.photoURL||null,bio:'',expiresAt:Date.now()+SD};localStorage.setItem('smsadda_userdata',JSON.stringify(data));window.location.href='/chat.html'}
+  function setLoading(type,loading){const btn=$(type+'Btn'),text=$(type+'BtnText'),spin=$(type+'Spinner');btn.disabled=loading;text.style.display=loading?'none':'inline';spin.classList.toggle('show',loading)}
+  function getError(err){switch(err.code){case'auth/email-already-in-use':return'Email already registered';case'auth/invalid-email':return'Invalid email';case'auth/weak-password':return'Password too weak (min 6 chars)';case'auth/user-not-found':return'No account found';case'auth/wrong-password':return'Incorrect password';case'auth/invalid-credential':return'Invalid email or password';case'auth/too-many-requests':return'Too many attempts. Wait.';case'auth/popup-closed-by-user':return'Sign-in cancelled';case'auth/network-request-failed':return'Network error';default:return err.message||'Something went wrong'}}
+  
+  // Theme
+  function stm(d){document.body.classList.toggle('dark',d);$('themeIcon').setAttribute('data-lucide',d?'sun':'moon');lucide.createIcons();localStorage.setItem('theme',d?'dark':'light')}
+  const pd=window.matchMedia('(prefers-color-scheme:dark)').matches;stm(localStorage.getItem('theme')==='dark'||(!localStorage.getItem('theme')&&pd));
+  $('themeBtn').addEventListener('click',function(){stm(!document.body.classList.contains('dark'))});
+  
+  document.addEventListener('keydown',function(e){if(e.key==='Enter'){if(curTab==='login')$('loginBtn').click();else $('signupBtn').click()}});
+  lucide.createIcons();
+})();
+</script>
+</body>
+</html>

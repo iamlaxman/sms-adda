@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=yes">
+  <meta name="description" content="SMS Adda – Install the app and enable notifications for the best experience.">
+  <meta name="theme-color" content="#F8FAFC" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#020617" media="(prefers-color-scheme: dark)">
+  <title>Install SMS Adda</title>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg">
+  <link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96">
+  <link rel="shortcut icon" href="/favicon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="SMS Adda">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --primary:#2563EB;--primary-hover:#1D4ED8;--primary-light:#EFF6FF;
+      --bg:#F8FAFC;--surface:#FFFFFF;--border:#E2E8F0;
+      --heading:#0F172A;--body:#475569;--muted:#94A3B8;
+      --success:#10B981;--danger:#EF4444;--warning:#F59E0B;
+      --shadow-sm:0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md:0 4px 15px rgba(0,0,0,0.06);
+      --shadow-lg:0 12px 30px rgba(0,0,0,0.08);
+      --radius-sm:8px;--radius-md:14px;--radius-lg:20px;--radius-xl:28px;
+      --transition:180ms ease;
+      --max-w:520px;
+    }
+    body.dark{
+      --bg:#020617;--surface:#0F172A;--border:#1E293B;
+      --heading:#F1F5F9;--body:#CBD5E1;--muted:#64748B;
+      --primary-light:#1E3A8A;
+    }
+    body{
+      font-family:'Inter',system-ui,-apple-system,sans-serif;
+      background:var(--bg);color:var(--body);
+      min-height:100vh;min-height:100dvh;
+      transition:background 300ms,color 300ms;
+      -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+      -webkit-tap-highlight-color:transparent;line-height:1.5;
+    }
+    
+    .topbar{
+      position:sticky;top:0;z-index:50;background:var(--surface);
+      border-bottom:1px solid var(--border);padding:0 12px;
+      height:52px;display:flex;align-items:center;justify-content:space-between;
+    }
+    .topbar-title{font-weight:700;font-size:0.9rem;color:var(--heading)}
+    .btn-icon{
+      width:34px;height:34px;border-radius:50%;display:flex;align-items:center;
+      justify-content:center;background:transparent;border:none;color:var(--body);
+      cursor:pointer;transition:all var(--transition);
+    }
+    .btn-icon:hover{background:var(--border)}
+    .btn-icon:active{transform:scale(0.92)}
+    
+    .main{max-width:var(--max-w);margin:0 auto;padding:20px 16px 40px}
+    
+    .hero{text-align:center;padding:10px 0 24px}
+    .hero-logo{
+      width:64px;height:64px;border-radius:18px;object-fit:cover;
+      box-shadow:0 8px 25px rgba(37,99,235,0.25);margin-bottom:12px;
+    }
+    .hero-logo-fb{
+      width:64px;height:64px;border-radius:18px;
+      background:linear-gradient(135deg,#2563EB,#7C3AED,#EC4899);
+      display:none;align-items:center;justify-content:center;margin:0 auto 12px;
+    }
+    .hero-title{font-size:1.6rem;font-weight:800;color:var(--heading);letter-spacing:-0.5px}
+    .hero-sub{font-size:0.88rem;color:var(--muted);margin-top:4px}
+    
+    .card{
+      background:var(--surface);border:1.5px solid var(--border);
+      border-radius:var(--radius-lg);padding:22px 18px;
+      margin-bottom:16px;transition:all var(--transition);
+    }
+    .card.active{border-color:var(--success);box-shadow:0 0 0 3px rgba(16,185,129,0.08)}
+    .card-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+    .card-icon{
+      width:42px;height:42px;border-radius:12px;display:flex;align-items:center;
+      justify-content:center;flex-shrink:0;
+    }
+    .card-icon.blue{background:var(--primary-light);color:var(--primary)}
+    .card-icon.green{background:#f0fdf4;color:var(--success)}
+    .card-icon.amber{background:#fffbeb;color:var(--warning)}
+    .card-title{font-weight:700;font-size:0.95rem;color:var(--heading)}
+    .card-desc{font-size:0.8rem;color:var(--muted);line-height:1.5;margin-bottom:12px}
+    
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:6px;
+      padding:11px 20px;border-radius:24px;font-weight:700;font-size:0.88rem;
+      border:none;cursor:pointer;transition:all var(--transition);font-family:inherit;
+    }
+    .btn:active{transform:scale(0.96)}
+    .btn-primary{background:var(--primary);color:#fff}
+    .btn-primary:hover{background:var(--primary-hover)}
+    .btn-primary:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+    .btn-success{background:var(--success);color:#fff}
+    .btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--heading)}
+    .btn-outline:hover{background:var(--border)}
+    .btn-sm{padding:7px 14px;font-size:0.78rem;border-radius:18px}
+    .btn-block{width:100%}
+    
+    .status-pill{
+      display:inline-flex;align-items:center;gap:5px;padding:4px 10px;
+      border-radius:14px;font-size:0.72rem;font-weight:600;
+    }
+    .status-pill.enabled{background:#f0fdf4;color:#166534}
+    .status-pill.disabled{background:#fef2f2;color:#991b1b}
+    body.dark .status-pill.enabled{background:#022c22;color:#6ee7b7}
+    body.dark .status-pill.disabled{background:#450a0a;color:#fca5a5}
+    
+    .notif-guide{
+      background:var(--bg);border:1px solid var(--border);
+      border-radius:var(--radius-md);padding:16px;margin-top:12px;
+    }
+    .notif-guide h4{font-size:0.85rem;font-weight:700;color:var(--heading);margin-bottom:10px}
+    
+    .device-tabs{display:flex;gap:4px;margin-bottom:12px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+    .device-tabs::-webkit-scrollbar{display:none}
+    .device-tab{
+      padding:7px 13px;border-radius:18px;font-weight:600;font-size:0.76rem;
+      border:1px solid var(--border);background:var(--bg);color:var(--body);
+      cursor:pointer;white-space:nowrap;transition:all var(--transition);font-family:inherit;
+    }
+    .device-tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+    
+    .step-list{list-style:none;display:flex;flex-direction:column;gap:10px}
+    .step-item{display:flex;gap:10px;padding:12px;background:var(--bg);border-radius:var(--radius-sm);border:1px solid var(--border)}
+    .step-num{
+      width:30px;height:30px;border-radius:50%;background:var(--primary);
+      color:#fff;display:flex;align-items:center;justify-content:center;
+      font-weight:700;font-size:0.78rem;flex-shrink:0;
+    }
+    .step-info{flex:1;min-width:0}
+    .step-info strong{font-size:0.82rem;color:var(--heading);display:block;margin-bottom:2px}
+    .step-info span{font-size:0.76rem;color:var(--muted)}
+    
+    .bottom-actions{text-align:center;margin-top:20px}
+    
+    @media(max-width:400px){
+      .main{padding:12px 10px 32px}
+      .hero-logo,.hero-logo-fb{width:52px;height:52px;border-radius:14px}
+      .hero-title{font-size:1.3rem}
+      .card{padding:16px 14px}
+    }
+    @media(min-width:768px){
+      .main{padding:28px 20px 48px}
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <span class="topbar-title">Setup SMS Adda</span>
+    <button class="btn-icon" id="themeBtn" aria-label="Toggle theme"><i data-lucide="moon" id="themeIcon" style="width:17px;height:17px;"></i></button>
+  </div>
+
+  <div class="main">
+    <div class="hero">
+      <img src="/favicon/favicon.svg" alt="SMS Adda" class="hero-logo" id="heroLogo">
+      <div class="hero-logo-fb" id="heroLogoFb"><i data-lucide="messages-square" style="width:30px;height:30px;color:#fff;"></i></div>
+      <h1 class="hero-title">Get the Best Experience</h1>
+      <p class="hero-sub">Install the app & enable notifications</p>
+    </div>
+
+    <!-- Install Card -->
+    <div class="card" id="installCard">
+      <div class="card-header">
+        <div class="card-icon blue"><i data-lucide="download" style="width:20px;height:20px;"></i></div>
+        <div>
+          <div class="card-title">Install SMS Adda</div>
+          <span class="status-pill enabled" id="installStatus" style="display:none">✓ Installed</span>
+          <span class="status-pill disabled" id="installNotStatus" style="display:none">Not installed</span>
+        </div>
+      </div>
+      <p class="card-desc">Add SMS Adda to your home screen for instant access, offline support, and a full-screen experience.</p>
+      <button class="btn btn-primary btn-block" id="installBtn"><i data-lucide="smartphone" style="width:17px;height:17px;"></i> <span id="installBtnText">Install App</span></button>
+      <p style="font-size:0.72rem;color:var(--muted);margin-top:6px;text-align:center" id="installNote"></p>
+
+      <div class="notif-guide" id="installGuide" style="display:none">
+        <h4>Manual Installation Guide</h4>
+        <div class="device-tabs" id="deviceTabs">
+          <button class="device-tab active" data-device="android">Android</button>
+          <button class="device-tab" data-device="ios">iPhone/iPad</button>
+          <button class="device-tab" data-device="desktop">Desktop</button>
+        </div>
+        <div id="installSteps"></div>
+      </div>
+    </div>
+
+    <!-- Notification Card -->
+    <div class="card" id="notifCard">
+      <div class="card-header">
+        <div class="card-icon green"><i data-lucide="bell-ring" style="width:20px;height:20px;"></i></div>
+        <div>
+          <div class="card-title">Enable Notifications</div>
+          <span class="status-pill enabled" id="notifStatus" style="display:none">✓ Enabled</span>
+          <span class="status-pill disabled" id="notifNotStatus" style="display:none">Disabled</span>
+        </div>
+      </div>
+      <p class="card-desc">Get instant alerts for messages and calls even when you're not in the app. Never miss a conversation.</p>
+      <button class="btn btn-success btn-block" id="notifBtn"><i data-lucide="bell" style="width:17px;height:17px;"></i> <span id="notifBtnText">Enable Notifications</span></button>
+      <p style="font-size:0.72rem;color:var(--muted);margin-top:6px;text-align:center" id="notifNote"></p>
+
+      <div class="notif-guide" id="notifGuide" style="display:none">
+        <h4>How to Enable Notifications</h4>
+        <div class="device-tabs" id="notifDeviceTabs">
+          <button class="device-tab active" data-device="chrome">Chrome</button>
+          <button class="device-tab" data-device="safari">Safari</button>
+          <button class="device-tab" data-device="firefox">Firefox</button>
+          <button class="device-tab" data-device="android">Android</button>
+          <button class="device-tab" data-device="ios">iOS</button>
+        </div>
+        <div id="notifSteps"></div>
+      </div>
+    </div>
+
+    <!-- Bottom -->
+    <div class="bottom-actions">
+      <button class="btn btn-primary btn-block" id="continueBtn"><i data-lucide="arrow-right" style="width:18px;height:18px;"></i> Continue to Chat</button>
+    </div>
+  </div>
+
+<script>
+(function(){
+  lucide.createIcons();
+  
+  function $(id){return document.getElementById(id)}
+  
+  // Logo fallback
+  const hl=$('heroLogo'),hlf=$('heroLogoFb');
+  if(hl){hl.addEventListener('error',function(){hl.style.display='none';hlf.style.display='flex';lucide.createIcons()})}
+  
+  // ===== SERVICE WORKER REGISTRATION =====
+  if('serviceWorker' in navigator){
+    window.addEventListener('load',function(){
+      navigator.serviceWorker.register('/sw.js',{scope:'/'}).then(function(r){console.log('[SW] Main registered:',r.scope)}).catch(function(e){console.error('[SW] Main failed:',e)});
+      navigator.serviceWorker.register('/firebase-messaging-sw.js',{scope:'/'}).then(function(r){console.log('[SW] FCM registered:',r.scope)}).catch(function(e){console.error('[SW] FCM failed:',e)});
+    });
+  }
+  
+  let deferredPrompt=null,isInstalled=false,notifPerm=Notification.permission;
+  
+  if(window.matchMedia('(display-mode:standalone)').matches){isInstalled=true;updateInstallUI()}
+  
+  window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferredPrompt=e;updateInstallUI()});
+  window.addEventListener('appinstalled',function(){isInstalled=true;deferredPrompt=null;updateInstallUI()});
+  
+  function updateInstallUI(){
+    if(isInstalled){
+      $('installStatus').style.display='inline-flex';$('installNotStatus').style.display='none';
+      $('installBtnText').textContent='Already Installed';$('installBtn').disabled=true;
+      $('installBtn').classList.add('btn-outline');$('installBtn').classList.remove('btn-primary');
+      $('installNote').textContent='App is installed on your device!';
+      $('installCard').classList.add('active');
+    }else if(deferredPrompt){
+      $('installStatus').style.display='none';$('installNotStatus').style.display='inline-flex';
+      $('installBtnText').textContent='Install App';$('installBtn').disabled=false;
+      $('installNote').textContent='One-tap install available';
+    }else{
+      $('installStatus').style.display='none';$('installNotStatus').style.display='inline-flex';
+      $('installBtnText').textContent='Show Install Guide';$('installBtn').disabled=false;
+      $('installNote').textContent='Follow the guide below to install';
+    }
+  }
+  
+  $('installBtn').addEventListener('click',function(){
+    if(isInstalled)return;
+    if(deferredPrompt){
+      deferredPrompt.prompt();deferredPrompt.userChoice.then(function(r){if(r.outcome==='accepted'){isInstalled=true;updateInstallUI()}deferredPrompt=null});
+    }else{
+      const g=$('installGuide');g.style.display=g.style.display==='none'?'block':'none';
+      if(g.style.display==='block'){renderInstallSteps('android');g.scrollIntoView({behavior:'smooth'})}
+    }
+  });
+  
+  function updateNotifUI(){
+    if(notifPerm==='granted'){
+      $('notifStatus').style.display='inline-flex';$('notifNotStatus').style.display='none';
+      $('notifBtnText').textContent='Notifications Enabled';$('notifBtn').disabled=true;
+      $('notifBtn').classList.add('btn-outline');$('notifBtn').classList.remove('btn-success');
+      $('notifNote').textContent='You will receive message and call alerts!';
+      $('notifCard').classList.add('active');
+    }else if(notifPerm==='denied'){
+      $('notifStatus').style.display='none';$('notifNotStatus').style.display='inline-flex';
+      $('notifBtnText').textContent='Show How to Enable';$('notifBtn').disabled=false;
+      $('notifNote').textContent='Notifications are blocked. Follow the guide below.';
+    }else{
+      $('notifStatus').style.display='none';$('notifNotStatus').style.display='inline-flex';
+      $('notifBtnText').textContent='Enable Notifications';$('notifBtn').disabled=false;
+      $('notifNote').textContent='Get alerts for messages and calls';
+    }
+  }
+  updateNotifUI();
+  
+  $('notifBtn').addEventListener('click',async function(){
+    if(notifPerm==='granted')return;
+    if(notifPerm==='default'){
+      try{const p=await Notification.requestPermission();notifPerm=p;updateNotifUI();if(p==='granted'){$('notifGuide').style.display='none'}}catch(e){}
+    }
+    if(notifPerm==='denied'||notifPerm==='default'){
+      const g=$('notifGuide');g.style.display=g.style.display==='none'?'block':'none';
+      if(g.style.display==='block'){renderNotifSteps('chrome');g.scrollIntoView({behavior:'smooth'})}
+    }
+  });
+  
+  const installGuides={
+    'android':[
+      {title:'Open Chrome menu',desc:'Tap the <strong>three dots (⋮)</strong> in the top-right corner.'},
+      {title:'Add to Home screen',desc:'Tap <strong>"Add to Home screen"</strong> or <strong>"Install app"</strong>.'},
+      {title:'Confirm',desc:'Tap <strong>"Add"</strong> or <strong>"Install"</strong> in the popup.'},
+      {title:'Open from home screen',desc:'Find the <strong>SMS Adda</strong> icon on your home screen.'}
+    ],
+    'ios':[
+      {title:'Tap Share button',desc:'Tap the <strong>Share icon</strong> at the bottom of Safari.'},
+      {title:'Add to Home Screen',desc:'Scroll and tap <strong>"Add to Home Screen"</strong>.'},
+      {title:'Confirm',desc:'Tap <strong>"Add"</strong> in the top-right corner.'},
+      {title:'Open from home screen',desc:'Find <strong>SMS Adda</strong> on your home screen.'}
+    ],
+    'desktop':[
+      {title:'Look for install icon',desc:'Click the <strong>install icon</strong> in the address bar.'},
+      {title:'Or use browser menu',desc:'Click <strong>⋮ menu → Cast, Save & Share → Install SMS Adda</strong>.'},
+      {title:'Confirm',desc:'Click <strong>"Install"</strong> in the dialog.'},
+      {title:'Open from desktop',desc:'Find <strong>SMS Adda</strong> in your Start Menu or taskbar.'}
+    ]
+  };
+  
+  function renderInstallSteps(device){
+    const g=installGuides[device]||installGuides['android'];
+    let h='<ol class="step-list">';
+    g.forEach(function(s,i){h+='<li class="step-item"><div class="step-num">'+(i+1)+'</div><div class="step-info"><strong>'+s.title+'</strong><span>'+s.desc+'</span></div></li>'});
+    h+='</ol>';$('installSteps').innerHTML=h;
+  }
+  
+  document.querySelectorAll('#deviceTabs .device-tab').forEach(function(t){t.addEventListener('click',function(){
+    document.querySelectorAll('#deviceTabs .device-tab').forEach(function(x){x.classList.remove('active')});
+    t.classList.add('active');renderInstallSteps(t.dataset.device);
+  })});
+  
+  const notifGuides={
+    'chrome':[
+      {title:'Click the lock icon',desc:'Click the <strong>lock/info icon</strong> in the address bar.'},
+      {title:'Find Notifications',desc:'Look for <strong>Notifications</strong> in the dropdown.'},
+      {title:'Change to Allow',desc:'Set it to <strong>"Allow"</strong> instead of "Block" or "Ask".'},
+      {title:'Reload the page',desc:'Refresh this page and click <strong>Enable Notifications</strong> again.'}
+    ],
+    'safari':[
+      {title:'Open Safari Preferences',desc:'Go to <strong>Safari → Settings → Websites → Notifications</strong>.'},
+      {title:'Find this website',desc:'Look for <strong>'+window.location.hostname+'</strong> in the list.'},
+      {title:'Change to Allow',desc:'Set the permission to <strong>"Allow"</strong>.'},
+      {title:'Reload the page',desc:'Refresh and try again.'}
+    ],
+    'firefox':[
+      {title:'Click the lock icon',desc:'Click the <strong>lock icon</strong> in the address bar.'},
+      {title:'Open Permission settings',desc:'Click the <strong>arrow (>)</strong> next to Permissions.'},
+      {title:'Change Notifications',desc:'Next to <strong>Notifications</strong>, uncheck "Use Default" and select <strong>"Allow"</strong>.'},
+      {title:'Reload the page',desc:'Refresh and try again.'}
+    ],
+    'android':[
+      {title:'Open Chrome Settings',desc:'Go to <strong>Chrome → Settings → Site Settings → Notifications</strong>.'},
+      {title:'Find this site',desc:'Look for <strong>'+window.location.hostname+'</strong>.'},
+      {title:'Change to Allow',desc:'Tap and select <strong>"Allow"</strong>.'},
+      {title:'Reload the page',desc:'Refresh this page and try again.'}
+    ],
+    'ios':[
+      {title:'Open Settings app',desc:'Go to <strong>Settings → Safari → Notifications</strong>.'},
+      {title:'Find this website',desc:'Look for <strong>'+window.location.hostname+'</strong>.'},
+      {title:'Enable notifications',desc:'Toggle <strong>Allow Notifications</strong> to ON.'},
+      {title:'Reload Safari',desc:'Go back to Safari and refresh this page.'}
+    ]
+  };
+  
+  function renderNotifSteps(device){
+    const g=notifGuides[device]||notifGuides['chrome'];
+    let h='<ol class="step-list">';
+    g.forEach(function(s,i){h+='<li class="step-item"><div class="step-num">'+(i+1)+'</div><div class="step-info"><strong>'+s.title+'</strong><span>'+s.desc+'</span></div></li>'});
+    h+='</ol>';$('notifSteps').innerHTML=h;
+  }
+  
+  document.querySelectorAll('#notifDeviceTabs .device-tab').forEach(function(t){t.addEventListener('click',function(){
+    document.querySelectorAll('#notifDeviceTabs .device-tab').forEach(function(x){x.classList.remove('active')});
+    t.classList.add('active');renderNotifSteps(t.dataset.device);
+  })});
+  
+  // Continue button
+  $('continueBtn').addEventListener('click',function(){
+    const ud=JSON.parse(localStorage.getItem('smsadda_userdata')||'{}');
+    if(ud.uid&&ud.expiresAt&&Date.now()<ud.expiresAt){window.location.href='/chat.html'}
+    else{window.location.href='/welcome.html'}
+  });
+  
+  // Theme
+  function stm(d){document.body.classList.toggle('dark',d);$('themeIcon').setAttribute('data-lucide',d?'sun':'moon');lucide.createIcons();localStorage.setItem('theme',d?'dark':'light')}
+  const pd=window.matchMedia('(prefers-color-scheme:dark)').matches;stm(localStorage.getItem('theme')==='dark'||(!localStorage.getItem('theme')&&pd));
+  $('themeBtn').addEventListener('click',function(){stm(!document.body.classList.contains('dark'))});
+  
+  updateInstallUI();lucide.createIcons();
+})();
+</script>
+</body>
+</html>
