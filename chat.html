@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=yes">
-  <meta name="description" content="SMS Adda – Anonymous real-time chat.">
+  <meta name="description" content="SMS Adda – Real-time chat with voice calls, file sharing, and push notifications.">
   <meta name="theme-color" content="#F8FAFC" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#020617" media="(prefers-color-scheme: dark)">
   <title>SMS Adda - Chat</title>
@@ -49,8 +49,7 @@
       height:100vh;height:100dvh;overflow:hidden;
       display:flex;flex-direction:column;position:fixed;inset:0;
       transition:background 300ms,color 300ms;
-      -webkit-font-smoothing:antialiased;
-      -webkit-tap-highlight-color:transparent;
+      -webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;
     }
     .header{height:var(--header-h);min-height:var(--header-h);background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 10px;gap:6px;z-index:40;flex-shrink:0}
     .header-info{flex:1;display:flex;align-items:center;gap:8px;min-width:0}
@@ -85,7 +84,8 @@
     .user-name{font-weight:500;color:var(--heading);font-size:0.82rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
     .user-bio{font-size:0.68rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
     .chat-main{flex:1;display:flex;flex-direction:column;background:var(--bg);min-width:0}
-    .msgs{flex:1;overflow-y:auto;padding:10px 14px;display:flex;flex-direction:column;gap:2px;scroll-behavior:smooth;-webkit-overflow-scrolling:touch}
+    .msgs{flex:1;overflow-y:auto;padding:10px 14px;display:flex;flex-direction:column;gap:2px;scroll-behavior:auto;-webkit-overflow-scrolling:touch}
+    .msgs .empty-state{margin:auto}
     .msg-row{display:flex;gap:5px;max-width:75%;position:relative;animation:fadeIn 0.2s ease}
     @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
     .msg-row.own{align-self:flex-end;flex-direction:row-reverse}
@@ -194,7 +194,6 @@
     .send-btn{width:34px;height:34px;border-radius:50%;background:var(--primary);border:none;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all 0.2s}
     .send-btn:active{transform:scale(0.9)}
     .send-btn:disabled{opacity:0.5}
-    .empty-state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--muted);gap:8px}
     .drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.3);z-index:30}
     .close-sidebar{display:none}
     .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:100;align-items:center;justify-content:center}
@@ -227,11 +226,13 @@
 </head>
 <body>
   <header class="header"><button class="btn-icon menu-btn" id="menuBtn"><i data-lucide="menu" style="width:19px;height:19px;"></i></button><div class="header-info"><span class="header-title" id="chatTitle"># General</span><span class="header-badge"><span class="header-dot"></span> <span id="onlineCount">0</span></span></div><div class="header-actions"><button class="btn-icon" id="voiceCallBtn" style="display:none"><i data-lucide="phone" style="width:17px;height:17px;"></i></button><button class="btn-icon" id="profileBtn"><i data-lucide="user-circle" style="width:17px;height:17px;"></i></button><button class="btn-icon" id="themeBtn"><i data-lucide="moon" id="themeIcon" style="width:17px;height:17px;"></i></button><button class="btn-icon" id="logoutBtn"><i data-lucide="log-out" style="width:17px;height:17px;"></i></button></div></header>
+
   <div class="call-overlay" id="callOverlay"><div class="call-top"><button class="call-btn-round" id="callMinimize"><i data-lucide="chevron-down" style="width:20px;height:20px;"></i></button><span style="color:#888;font-size:0.74rem">Call</span><button class="call-btn-round" id="callSpeakerBtn"><i data-lucide="volume-2" style="width:18px;height:18px;"></i></button></div><div style="text-align:center"><div class="call-avatar-xl" id="callAvatar">?</div><div class="call-name-xl" id="callName">User</div><div class="call-status" id="callStatus">Connecting...</div><div class="call-timer" id="callTimer">00:00</div></div><div class="call-controls" id="callControls"></div></div>
   <div class="preview-overlay" id="previewOverlay"><div id="previewContent"></div><div class="preview-actions"><a id="previewDownload" href="" download class="preview-btn download"><i data-lucide="download" style="width:14px;height:14px;"></i> Download</a><button class="preview-btn close" id="previewCloseBtn"><i data-lucide="x" style="width:14px;height:14px;"></i> Close</button></div></div>
   <div class="modal-overlay" id="profileModal"><div class="modal-box"><h3>Profile</h3><div class="avatar-upload" id="avatarUpload"><img src="" alt="" id="profileAvatar"><div class="overlay"><i data-lucide="camera" style="width:16px;height:16px;"></i></div></div><input type="file" id="avatarInput" accept="image/*" style="display:none"><div class="form-group"><label>Name</label><input type="text" id="profileName" maxlength="20"></div><div class="form-group"><label>Bio</label><input type="text" id="profileBio" placeholder="About you..." maxlength="100"></div><div class="form-group"><label>Email</label><input type="text" id="profileEmail" disabled style="opacity:0.5"></div><div style="display:flex;gap:8px;margin-top:10px"><button class="btn btn-primary" id="saveProfile" style="flex:1">Save</button><button class="btn btn-ghost" id="closeProfile" style="flex:1">Cancel</button></div></div></div>
   <div class="confirm-overlay" id="confirmDialog"><div class="confirm-box"><div class="confirm-icon danger"><i data-lucide="alert-triangle" style="width:24px;height:24px;"></i></div><div class="confirm-title" id="confirmTitle">Are you sure?</div><div class="confirm-text" id="confirmText">This action cannot be undone.</div><div class="confirm-actions"><button class="btn btn-ghost" id="confirmCancel">Cancel</button><button class="btn btn-primary" id="confirmOk" style="background:var(--danger)">Confirm</button></div></div></div>
   <div class="drawer-overlay" id="drawerOverlay"></div>
+
   <div class="app-body">
     <aside class="sidebar" id="sidebar"><div class="sidebar-head"><span class="sidebar-title">Users</span><button class="btn-icon close-sidebar" id="closeSidebarBtn"><i data-lucide="x" style="width:17px;height:17px;"></i></button></div><div class="sidebar-tabs"><button class="sidebar-tab active" data-tab="online">Online</button><button class="sidebar-tab" data-tab="all">All Users</button></div><div class="sidebar-search"><input type="text" class="search-input" id="searchInput" placeholder="Search..."></div><div class="user-list" id="userList"></div></aside>
     <main class="chat-main">
@@ -247,33 +248,71 @@
 <script>
 (function(){
   lucide.createIcons();
+  
+  // ===== FIREBASE INIT (MUST BE FIRST) =====
   const fc={apiKey:"AIzaSyCoKAoarWlu8B6cnIw549hfg_UPe8YRSko",authDomain:"nepchat-aac9d.firebaseapp.com",databaseURL:"https://nepchat-aac9d-default-rtdb.firebaseio.com",projectId:"nepchat-aac9d",storageBucket:"nepchat-aac9d.firebasestorage.app",messagingSenderId:"179485804786",appId:"1:179485804786:web:3ec8a2fc563b08c682286b"};
-  firebase.initializeApp(fc);const auth=firebase.auth(),db=firebase.database(),fmsg=firebase.messaging();
+  firebase.initializeApp(fc);
+  
+  // ===== DEFINE ALL GLOBALS =====
+  const auth=firebase.auth();
+  const db=firebase.database();
+  const fmsg=firebase.messaging();
   const S=window.location.origin;
   const ud=JSON.parse(localStorage.getItem('smsadda_userdata')||'{}');
+  
   if(!ud.uid){window.location.href='/welcome.html';return}
+  
   const cu={uid:ud.uid,email:ud.email,displayName:ud.displayName||'User',photoURL:ud.photoURL||null,bio:ud.bio||''};
   let cc='general',ou=[],au=[],sidebarTab='online',rt=null,cid=null,pc=null,ls=null,ia=false,im=false,cs=0;
   let pf=null,pvb=null,mr=null,ac=[],ir=false,pa=null,ga=null,gab=null,recST=null,recTI=null,rtAudio=null,remoteUser=null;
   let confirmCallback=null;
   
   const socket=io(S,{transports:['websocket','polling']});
+  
+  // ===== HELPER FUNCTIONS =====
   function $(id){return document.getElementById(id)}
   function esc(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML}
   function ft(t){if(!t)return'';const d=new Date(t);return d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}
   function fs(b){if(!b)return'';if(b<1024)return b+' B';if(b<1048576)return(b/1024).toFixed(1)+' KB';return(b/1048576).toFixed(1)+' MB'}
   function fd(s){if(!s||isNaN(s))return'0:00';const m=Math.floor(s/60);return m+':'+String(Math.floor(s%60)).padStart(2,'0')}
   function gk(){return cc==='general'?'general':[cu.uid,cc].sort().join('_')}
+  function scrollToBottom(){const c=$('msgs');if(c)c.scrollTop=c.scrollHeight}
   
-  // ===== SERVICE WORKER REGISTRATION =====
+  // ===== CREATE USER NODE (NOW db IS DEFINED) =====
+  function createUserNode(){
+    const ur=db.ref('users/'+cu.uid);
+    ur.once('value').then(function(s){
+      const ed=s.val()||{};
+      ur.update({
+        displayName:cu.displayName,
+        photoURL:cu.photoURL||ed.photoURL||null,
+        bio:cu.bio||ed.bio||'',
+        email:cu.email||ed.email||'',
+        lastSeen:firebase.database.ServerValue.TIMESTAMP,
+        online:true,
+        createdAt:ed.createdAt||firebase.database.ServerValue.TIMESTAMP
+      });
+      console.log('[USER] Node created for:',cu.displayName);
+    }).catch(function(e){
+      console.error('[USER] Error:',e);
+      ur.set({
+        displayName:cu.displayName,photoURL:cu.photoURL||null,bio:cu.bio||'',
+        email:cu.email||'',lastSeen:firebase.database.ServerValue.TIMESTAMP,
+        online:true,createdAt:firebase.database.ServerValue.TIMESTAMP
+      });
+    });
+    ur.onDisconnect().update({online:false,lastSeen:firebase.database.ServerValue.TIMESTAMP});
+  }
+  
+  // ===== SERVICE WORKERS =====
   if('serviceWorker' in navigator){
     window.addEventListener('load',function(){
-      navigator.serviceWorker.register('/sw.js',{scope:'/'}).then(function(r){console.log('[SW] Main registered:',r.scope)}).catch(function(e){console.error('[SW] Main failed:',e)});
-      navigator.serviceWorker.register('/firebase-messaging-sw.js',{scope:'/'}).then(function(r){console.log('[SW] FCM registered:',r.scope)}).catch(function(e){console.error('[SW] FCM failed:',e)});
+      navigator.serviceWorker.register('/sw.js',{scope:'/'}).then(function(r){console.log('[SW] Main:',r.scope)}).catch(function(e){console.error('[SW] Main:',e)});
+      navigator.serviceWorker.register('/firebase-messaging-sw.js',{scope:'/'}).then(function(r){console.log('[SW] FCM:',r.scope)}).catch(function(e){console.error('[SW] FCM:',e)});
     });
   }
   
-  // ===== FCM INIT =====
+  // ===== FCM =====
   async function initFCM(){
     try{
       if(Notification.permission==='default')await Notification.requestPermission();
@@ -285,20 +324,18 @@
   }
   setTimeout(initFCM,1500);
   
-  // Confirm dialog
+  // ===== CONFIRM DIALOG =====
   function showConfirm(title,text,cb){$('confirmTitle').textContent=title;$('confirmText').textContent=text;$('confirmDialog').classList.add('open');confirmCallback=cb}
   $('confirmCancel').addEventListener('click',function(){$('confirmDialog').classList.remove('open');confirmCallback=null});
   $('confirmOk').addEventListener('click',function(){$('confirmDialog').classList.remove('open');if(confirmCallback)confirmCallback();confirmCallback=null});
   
-  // Messages
-  function lm(){const k=gk(),r=cc==='general'?db.ref('messages/general'):db.ref('messages/private/'+k);r.limitToLast(50).off();r.limitToLast(50).on('child_added',function(s){const m=s.val();m.id=s.key;am(m)})}
-  function am(m){if(document.getElementById('m-'+m.id))return;const emp=$('msgs').querySelector('.empty-state');if(emp)emp.remove();const io=m.senderUid===cu.uid,rw=document.createElement('div');rw.className='msg-row'+(io?' own':'')+(m.deleted?' deleted':'');rw.id='m-'+m.id;const tm=ft(m.timestamp);let bc='';if(m.replyTo)bc+='<div class="msg-reply-preview">↩ '+esc((m.replyTo.message||'').substring(0,50))+'</div>';if(m.deleted)bc+='<span style="font-style:italic;opacity:0.6">Deleted</span>';else{if(m.message)bc+='<span class="msg-text">'+esc(m.message)+'</span>';if(m.edited)bc+=' <span style="font-size:0.58rem;opacity:0.7">edited</span>'}if(m.file&&!m.deleted)bc+=rf(m.file);rw.innerHTML='<div class="msg-av">'+(m.senderPhoto?'<img src="'+m.senderPhoto+'" alt="">':'<i data-lucide="user" style="width:12px;height:12px;"></i>')+'</div><div class="msg-wrap"><div class="msg-meta"><span class="msg-sender">'+esc(m.senderName||'User')+'</span><span class="msg-time">'+tm+'</span></div><div class="msg-bubble-wrap"><div class="msg-bubble">'+bc+'</div><div class="msg-menu-wrap"><div class="msg-dots">⋮</div><div class="msg-menu" id="menu-'+m.id+'"><button data-a="reply" data-mid="'+m.id+'">↩ Reply</button>'+(io?'<button data-a="edit" data-mid="'+m.id+'">✏️ Edit</button><button data-a="delete" data-mid="'+m.id+'" class="danger">🗑 Delete</button>':'')+'</div></div></div></div>';$('msgs').appendChild(rw);ae(rw,m);lucide.createIcons();$('msgs').scrollTop=$('msgs').scrollHeight}
-  
+  // ===== MESSAGES =====
+  function lm(){const k=gk(),r=cc==='general'?db.ref('messages/general'):db.ref('messages/private/'+k);$('msgs').innerHTML='';$('msgs').scrollTop=0;r.limitToLast(50).off();r.limitToLast(50).on('child_added',function(s){const m=s.val();m.id=s.key;am(m)})}
+  function am(m){if(document.getElementById('m-'+m.id))return;const emp=$('msgs').querySelector('.empty-state');if(emp)emp.remove();const io=m.senderUid===cu.uid,rw=document.createElement('div');rw.className='msg-row'+(io?' own':'')+(m.deleted?' deleted':'');rw.id='m-'+m.id;const tm=ft(m.timestamp);let bc='';if(m.replyTo)bc+='<div class="msg-reply-preview">↩ '+esc((m.replyTo.message||'').substring(0,50))+'</div>';if(m.deleted)bc+='<span style="font-style:italic;opacity:0.6">Deleted</span>';else{if(m.message)bc+='<span class="msg-text">'+esc(m.message)+'</span>';if(m.edited)bc+=' <span style="font-size:0.58rem;opacity:0.7">edited</span>'}if(m.file&&!m.deleted)bc+=rf(m.file);rw.innerHTML='<div class="msg-av">'+(m.senderPhoto?'<img src="'+m.senderPhoto+'" alt="">':'<i data-lucide="user" style="width:12px;height:12px;"></i>')+'</div><div class="msg-wrap"><div class="msg-meta"><span class="msg-sender">'+esc(m.senderName||'User')+'</span><span class="msg-time">'+tm+'</span></div><div class="msg-bubble-wrap"><div class="msg-bubble">'+bc+'</div><div class="msg-menu-wrap"><div class="msg-dots">⋮</div><div class="msg-menu" id="menu-'+m.id+'"><button data-a="reply" data-mid="'+m.id+'">↩ Reply</button>'+(io?'<button data-a="edit" data-mid="'+m.id+'">✏️ Edit</button><button data-a="delete" data-mid="'+m.id+'" class="danger">🗑 Delete</button>':'')+'</div></div></div></div>';$('msgs').appendChild(rw);ae(rw,m);lucide.createIcons();scrollToBottom()}
   function rf(f){if(f.type&&f.type.startsWith('image/'))return'<div class="msg-img-wrap"><img src="'+f.url+'" alt="" loading="lazy"></div>';if(f.type&&(f.type.startsWith('audio/')||f.type.indexOf('audio')>=0))return bap(f.url);return'<div class="msg-file-wrap"><i data-lucide="file" style="width:13px;height:13px;"></i><span class="msg-file-name">'+esc(f.name)+'</span><span class="msg-file-size">'+fs(f.size)+'</span></div>'}
   function bap(url){return'<div class="audio-player" data-url="'+url+'"><button class="audio-btn"><i data-lucide="play" style="width:12px;height:12px;"></i></button><div class="audio-wave">'+Array(18).fill(0).map(function(){return'<div class="bar" style="height:'+(Math.random()*12+3)+'px"></div>'}).join('')+'</div><span class="audio-dur">0:00</span></div>'}
   
   function ae(rw,m){const dot=rw.querySelector('.msg-dots'),menu=rw.querySelector('.msg-menu');if(dot&&menu){dot.addEventListener('click',function(e){e.stopPropagation();cam();menu.classList.toggle('show')})}rw.querySelectorAll('.msg-menu button').forEach(function(b){b.addEventListener('click',function(e){e.stopPropagation();const a=this.dataset.a,mid=this.dataset.mid;cam();if(a==='reply')rem(mid,m.senderName,m.message);else if(a==='edit')edm(mid);else if(a==='delete')showConfirm('Delete Message?','This message will be removed.',function(){dem(mid)})})});rw.querySelectorAll('.msg-img-wrap').forEach(function(w){w.addEventListener('click',function(){const img=w.querySelector('img');if(img)oip(img.src,img.alt)})});rw.querySelectorAll('.msg-file-wrap').forEach(function(w){w.addEventListener('click',function(){if(m.file)ofp(m.file.url,m.file.name,m.file.size)})});rw.querySelectorAll('.audio-player').forEach(function(p){aap(p)})}
-  
   function cam(){document.querySelectorAll('.msg-menu').forEach(function(m){m.classList.remove('show')})}
   function rem(mid,sn,msg){rt={id:mid,senderName:sn,message:msg};$('msgInput').focus();$('msgInput').placeholder='Replying...'}
   function edm(mid){const t=prompt('Edit message:');if(!t||!t.trim())return;const r=cc==='general'?db.ref('messages/general/'+mid):db.ref('messages/private/'+gk()+'/'+mid);r.update({message:t.trim(),edited:true})}
@@ -340,9 +377,9 @@
   async function usv(b){$('sendVoice').disabled=true;const r=new FileReader();r.onload=async function(e){try{const res=await fetch(S+'/upload',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({file:e.target.result,type:'audio/webm',filename:'voice.webm'})});const d=await res.json();if(d.success){const m={senderUid:cu.uid,senderName:cu.displayName,senderPhoto:cu.photoURL,message:'',timestamp:firebase.database.ServerValue.TIMESTAMP,type:'voice',file:{url:d.url,name:'Voice',type:'audio/webm',size:d.size},replyTo:rt,edited:false,deleted:false};const r=cc==='general'?db.ref('messages/general'):db.ref('messages/private/'+gk());r.push(m)}}catch(er){}cleanupRec();$('sendVoice').disabled=false};r.readAsDataURL(b)}
   
   // Users
-  function lu(){db.ref('users').on('value',function(s){au=[];ou=[];s.forEach(function(c){const u=c.val();if(c.key!==cu.uid){const uo={uid:c.key,displayName:u.displayName||'User',photoURL:u.photoURL||null,bio:u.bio||'',online:!!u.online,lastSeen:u.lastSeen||0};au.push(uo);if(uo.online)ou.push(uo)}});$('onlineCount').textContent=ou.length+' online';ru()})}
+  function lu(){db.ref('users').on('value',function(s){au=[];ou=[];s.forEach(function(c){const u=c.val();if(!u||c.key===cu.uid)return;const uo={uid:c.key,displayName:u.displayName||'User',photoURL:u.photoURL||null,bio:u.bio||'',online:u.online===true,lastSeen:u.lastSeen||0};au.push(uo);if(uo.online)ou.push(uo)});$('onlineCount').textContent=ou.length+' online';ru()})}
   function ru(f){f=f||'';const list=sidebarTab==='online'?ou:au;$('userList').innerHTML='';const gi=document.createElement('div');gi.className='user-item'+(cc==='general'?' active':'');gi.innerHTML='<div class="user-avatar"><i data-lucide="users" style="width:14px;height:14px;"></i></div><div class="user-info"><div class="user-name"># General Chat</div><div class="user-bio">Public room</div></div>';gi.addEventListener('click',function(){oc('general')});$('userList').appendChild(gi);list.filter(function(u){return(u.displayName||'').toLowerCase().indexOf(f.toLowerCase())>=0}).forEach(function(u){const i=document.createElement('div');i.className='user-item'+(cc===u.uid?' active':'');i.innerHTML='<div class="user-avatar">'+(u.photoURL?'<img src="'+u.photoURL+'" alt="">':'<i data-lucide="user" style="width:14px;height:14px;"></i>')+'<span class="status-dot '+(u.online?'online':'offline')+'"></span></div><div class="user-info"><div class="user-name">'+esc(u.displayName)+'</div><div class="user-bio">'+(u.bio||(u.online?'Online':'Offline'))+'</div></div>';i.addEventListener('click',function(){oc(u.uid)});$('userList').appendChild(i)});lucide.createIcons()}
-  function oc(id){cc=id;if(id==='general'){$('chatTitle').textContent='# General';$('voiceCallBtn').style.display='none';remoteUser=null}else{const u=au.find(function(x){return x.uid===id});$('chatTitle').textContent='@ '+(u?.displayName||'User');$('voiceCallBtn').style.display='flex';remoteUser=u}$('msgs').innerHTML='';lm();ru();if(innerWidth<768)csf()}
+  function oc(id){cc=id;if(id==='general'){$('chatTitle').textContent='# General';$('voiceCallBtn').style.display='none';remoteUser=null}else{const u=au.find(function(x){return x.uid===id});$('chatTitle').textContent='@ '+(u?.displayName||'User');$('voiceCallBtn').style.display='flex';remoteUser=u}$('msgs').innerHTML='';$('msgs').scrollTop=0;lm();ru();if(innerWidth<768)csf()}
   document.querySelectorAll('.sidebar-tab').forEach(function(t){t.addEventListener('click',function(){document.querySelectorAll('.sidebar-tab').forEach(function(x){x.classList.remove('active')});t.classList.add('active');sidebarTab=t.dataset.tab;ru()})});
   function osf(){$('sidebar').classList.add('open');$('drawerOverlay').style.display='block'}
   function csf(){$('sidebar').classList.remove('open');$('drawerOverlay').style.display='none'}
@@ -389,14 +426,16 @@
   // Logout
   $('logoutBtn').addEventListener('click',function(){showConfirm('Leave Chat?','Your messages will disappear. Are you sure?',function(){auth.signOut();db.ref('users/'+cu.uid).update({online:false});localStorage.removeItem('smsadda_userdata');window.location.href='/welcome.html'})});
   
-  // Presence
-  db.ref('users/'+cu.uid).onDisconnect().update({online:false,lastSeen:firebase.database.ServerValue.TIMESTAMP});
-  db.ref('users/'+cu.uid).set({displayName:cu.displayName,photoURL:cu.photoURL,bio:cu.bio||'',lastSeen:firebase.database.ServerValue.TIMESTAMP,online:true,email:cu.email});
-  
   // Join notification
-  db.ref('users').on('child_added',function(snap){const u=snap.val();if(u.online&&snap.key!==cu.uid&&cc==='general'){db.ref('messages/general').push({senderUid:'system',senderName:'System',message:u.displayName+' joined the chat',timestamp:firebase.database.ServerValue.TIMESTAMP,type:'system',edited:false,deleted:false})}});
+  db.ref('users').on('child_added',function(snap){const u=snap.val();if(u&&u.online&&snap.key!==cu.uid&&cc==='general'){db.ref('messages/general').push({senderUid:'system',senderName:'System',message:(u.displayName||'User')+' joined the chat',timestamp:firebase.database.ServerValue.TIMESTAMP,type:'system',edited:false,deleted:false})}});
   
-  lm();lu();ru();lucide.createIcons();
+  // ===== INITIALIZE EVERYTHING =====
+  createUserNode();
+  lm();
+  lu();
+  ru();
+  lucide.createIcons();
+  console.log('[CHAT] Initialized for:', cu.displayName);
 })();
 </script>
 </body>
